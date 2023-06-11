@@ -1,22 +1,28 @@
 package com.example.SpringAngularAuth.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Role implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String USER = "USER";
     public static final String ROLE_USER = "ROLE_USER";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_MODERATOR = "ROLE_MODERATOR";
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ROLE_ID")
-    private int roleId;
+    private Long roleId;
 
     private String name;
 
@@ -24,38 +30,8 @@ public class Role implements Serializable {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public Role() {
-    }
-
     public Role(String name) {
         this.name = name;
-    }
-
-    // Getters and setters goes here
-
-
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
     }
 
     @Override
