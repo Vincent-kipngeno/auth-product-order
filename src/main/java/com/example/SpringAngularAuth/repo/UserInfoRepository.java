@@ -1,6 +1,6 @@
 package com.example.SpringAngularAuth.repo;
 
-import com.example.SpringAngularAuth.model.UserInfo;
+import com.example.SpringAngularAuth.dto.UserInfo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;

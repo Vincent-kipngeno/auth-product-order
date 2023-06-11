@@ -1,4 +1,4 @@
 package com.example.SpringAngularAuth.controller;
 
-public class PagesController {
+public class UserController {
 }

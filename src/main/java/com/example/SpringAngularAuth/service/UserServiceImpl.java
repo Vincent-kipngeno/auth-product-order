@@ -1,38 +1,29 @@
 package com.example.SpringAngularAuth.service;
 
-import com.example.SpringAngularAuth.dto.UserRegistrationForm;
+import com.example.SpringAngularAuth.dto.SignUpRequest;
 import com.example.SpringAngularAuth.dto.SocialProvider;
 import com.example.SpringAngularAuth.dto.LocalUser;
 import com.example.SpringAngularAuth.exception.OAuth2AuthenticationProcessingException;
 import com.example.SpringAngularAuth.exception.UserAlreadyExistAuthenticationException;
 import com.example.SpringAngularAuth.model.Role;
 import com.example.SpringAngularAuth.model.User;
-import com.example.SpringAngularAuth.oauth2.user.OAuth2UserInfo;
-import com.example.SpringAngularAuth.oauth2.user.OAuth2UserInfoFactory;
+import com.example.SpringAngularAuth.security.oauth2.user.OAuth2UserInfo;
+import com.example.SpringAngularAuth.security.oauth2.user.OAuth2UserInfoFactory;
 import com.example.SpringAngularAuth.repo.RoleRepository;
 import com.example.SpringAngularAuth.repo.UserRepository;
 import com.example.SpringAngularAuth.util.GeneralUtils;
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Calendar;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    @Autowired
-    @Qualifier(value = "localUserDetailService")
-    private UserDetailsService userDetailService;
 
     @Autowired
     private UserRepository userRepository;
@@ -45,13 +36,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(value = "transactionManager")
-    public User registerNewUser(final UserRegistrationForm userRegistrationForm) throws UserAlreadyExistAuthenticationException {
-        if (userRegistrationForm.getUserID() != null && userRepository.existsById(userRegistrationForm.getUserID())) {
-            throw new UserAlreadyExistAuthenticationException("User with User id " + userRegistrationForm.getUserID() + " already exist");
-        } else if (userRepository.existsByEmail(userRegistrationForm.getEmail())) {
-            throw new UserAlreadyExistAuthenticationException("User with email id " + userRegistrationForm.getEmail() + " already exist");
+    public User registerNewUser(final SignUpRequest signUpRequest) throws UserAlreadyExistAuthenticationException {
+        if (signUpRequest.getUserID() != null && userRepository.existsById(signUpRequest.getUserID())) {
+            throw new UserAlreadyExistAuthenticationException("User with User id " + signUpRequest.getUserID() + " already exist");
+        } else if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new UserAlreadyExistAuthenticationException("User with email id " + signUpRequest.getEmail() + " already exist");
         }
-        User user = buildUser(userRegistrationForm);
+        User user = buildUser(signUpRequest);
         Date now = Calendar.getInstance().getTime();
         user.setCreatedDate(now);
         user.setModifiedDate(now);
@@ -60,7 +51,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private User buildUser(final UserRegistrationForm formDTO) {
+    private User buildUser(final SignUpRequest formDTO) {
         User user = new User();
         user.setDisplayName(formDTO.getDisplayName());
         user.setEmail(formDTO.getEmail());
@@ -88,7 +79,7 @@ public class UserServiceImpl implements UserService {
         } else if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
-        UserRegistrationForm userDetails = toUserRegistrationObject(registrationId, oAuth2UserInfo);
+        SignUpRequest userDetails = toUserRegistrationObject(registrationId, oAuth2UserInfo);
         User user = findUserByEmail(oAuth2UserInfo.getEmail());
         if (user != null) {
             if (!user.getProvider().equals(registrationId) && !user.getProvider().equals(SocialProvider.LOCAL.getProviderType())) {
@@ -108,8 +99,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-    private UserRegistrationForm toUserRegistrationObject(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
-        return UserRegistrationForm.getBuilder().addProviderUserID(oAuth2UserInfo.getId()).addDisplayName(oAuth2UserInfo.getName()).addEmail(oAuth2UserInfo.getEmail())
+    private SignUpRequest toUserRegistrationObject(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
+        return SignUpRequest.getBuilder().addProviderUserID(oAuth2UserInfo.getId()).addDisplayName(oAuth2UserInfo.getName()).addEmail(oAuth2UserInfo.getEmail())
                 .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword("changeit").build();
+    }
+
+    @Override
+    public Optional<User> findUserById(Long id) {
+        return userRepository.findById(id);
     }
 }

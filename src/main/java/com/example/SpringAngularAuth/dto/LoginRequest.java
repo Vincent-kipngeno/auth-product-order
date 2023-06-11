@@ -1,4 +1,4 @@
 package com.example.SpringAngularAuth.dto;
 
-public class UserRegistrationForm {
+public class LoginRequest {
 }

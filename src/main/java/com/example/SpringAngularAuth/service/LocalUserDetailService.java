@@ -1,6 +1,7 @@
 package com.example.SpringAngularAuth.service;
 
 import com.example.SpringAngularAuth.dto.LocalUser;
+import com.example.SpringAngularAuth.exception.ResourceNotFoundException;
 import com.example.SpringAngularAuth.model.User;
 import com.example.SpringAngularAuth.util.GeneralUtils;
 import jakarta.transaction.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service("localUserDetailService")
 public class LocalUserDetailService implements UserDetailsService {
+
     @Autowired
     private UserService userService;
 
@@ -21,6 +23,20 @@ public class LocalUserDetailService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User " + email + " was not found in the database");
         }
+        return createLocalUser(user);
+    }
+
+    @Transactional
+    public LocalUser loadUserById(Long id) {
+        User user = userService.findUserById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return createLocalUser(user);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    private LocalUser createLocalUser(User user) {
         return new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRoles()), user);
     }
 }

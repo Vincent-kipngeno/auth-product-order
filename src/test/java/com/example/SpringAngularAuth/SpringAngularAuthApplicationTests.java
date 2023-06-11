@@ -1,6 +1,6 @@
 package com.example.SpringAngularAuth;
 
-import com.example.SpringAngularAuth.model.UserInfo;
+import com.example.SpringAngularAuth.dto.UserInfo;
 import com.example.SpringAngularAuth.repo.UserInfoRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

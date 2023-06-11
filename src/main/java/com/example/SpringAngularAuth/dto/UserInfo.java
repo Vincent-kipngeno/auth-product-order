@@ -1,4 +1,4 @@
-package com.example.SpringAngularAuth.model;
+package com.example.SpringAngularAuth.dto;
 
 import jakarta.persistence.*;
 
