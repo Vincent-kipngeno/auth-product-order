@@ -17,6 +17,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+/**
+ * TokenProvider is responsible for token creation, validation, and getting user ID from the token. It makes use of the io.jsonwebtoken.Jwts for achieving this.
+ */
 @Service
 public class TokenProvider {
 
