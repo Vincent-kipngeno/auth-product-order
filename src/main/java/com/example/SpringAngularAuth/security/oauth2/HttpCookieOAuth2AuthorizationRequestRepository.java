@@ -10,6 +10,17 @@ import org.springframework.stereotype.Component;
 import com.example.SpringAngularAuth.util.CookieUtils;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 
+/**
+ * Creating Authorization Request Repository
+ * The OAuth2 protocol recommends using a state parameter to prevent CSRF attacks. During authentication, the application sends this parameter in the authorization request, and the OAuth2 provider returns this parameter unchanged in the OAuth2 callback.
+ *
+ * The application compares the value of the state parameter returned from the OAuth2 provider with the value that it had sent initially. If they don’t match then it denies the authentication request.
+ *
+ * To achieve this flow, the application needs to store the state parameter somewhere so that it can later compare it with the state returned from the OAuth2 provider.
+ *
+ * HttpCookieOAuth2AuthorizationRequestRepository.java
+ * This class is responsible for storing and retrieving the OAuth2 authorization request and redirect_uri of the Angular client in the cookies.
+ */
 @Component
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
