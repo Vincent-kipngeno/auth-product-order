@@ -13,12 +13,12 @@ import com.example.SpringAngularAuth.repo.RoleRepository;
 import com.example.SpringAngularAuth.repo.UserRepository;
 import com.example.SpringAngularAuth.util.GeneralUtils;
 import io.micrometer.common.util.StringUtils;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
